@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Columns - Universal Anomaly Detector</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">Universal Anomaly Detector</a>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-white">
+                        <h3 class="text-center mb-0">Select Columns for Analysis</h3>
+                    </div>
+                    <div class="card-body">
+                        <form action="/detect" method="post" id="detectForm">
+                            <input type="hidden" name="file_id" value="{{ file_id }}">
+
+                            <div class="mb-4">
+                                <h5>Available Columns</h5>
+                                <p class="text-muted">Select the numeric columns you want to analyze for anomalies</p>
+
+                                <div class="d-flex justify-content-between mb-3">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" id="selectAll">Select All</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" id="deselectAll">Deselect All</button>
+                                </div>
+
+                                <div class="row">
+                                    {% for column in columns %}
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input column-checkbox" type="checkbox" name="columns" value="{{ column }}" id="col-{{ loop.index }}" checked>
+                                            <label class="form-check-label" for="col-{{ loop.index }}">
+                                                {{ column }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg" id="detectBtn">
+                                    <span id="detectText">Detect Anomalies</span>
+                                    <span id="detectSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Select/deselect all functionality
+        document.getElementById('selectAll').addEventListener('click', function() {
+            document.querySelectorAll('.column-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+        });
+
+        document.getElementById('deselectAll').addEventListener('click', function() {
+            document.querySelectorAll('.column-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        });
+
+        // Loading indicator for form submission
+        document.getElementById('detectForm').addEventListener('submit', function() {
+            const btn = document.getElementById('detectBtn');
+            const text = document.getElementById('detectText');
+            const spinner = document.getElementById('detectSpinner');
+
+            btn.disabled = true;
+            text.textContent = 'Processing...';
+            spinner.classList.remove('d-none');
+        });
+    </script>
+</body>
+</html>
